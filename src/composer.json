@@ -1,0 +1,17 @@
+{
+	"require": {
+			"latte/latte": "^2.1.0",
+			"tracy/tracy": "^2.1.0",
+			"nette/bootstrap": "^2.1.0"
+	},
+		"config": {
+			"platform": {
+				"php": "5.4.29"
+			},
+			        "vendor-dir": "~/git2/tdc/www/v2/vendor"
+		},
+		"autoload": {
+				"psr-4": { "biibtech\\tdc\\": "src/"
+				}
+		}
+}
