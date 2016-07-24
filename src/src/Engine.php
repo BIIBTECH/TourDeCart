@@ -22,11 +22,6 @@ class Engine {
 	}
 
 	public function test() {
-
-				$this->tours->offsetGet(1)->disableBestResults();
-exit;
-				
-
 		echo "<h1>User</h1>";
 		echo "<br>nejlepsi cas cloveka (rosmuller) v jizde 3 = 1:33.531<br>";
 		dump($this->users->offsetGet('rosmuller')->getBestTime($this->tours->offsetGet(1)->getRaces()->offsetGet(1)));
@@ -69,9 +64,7 @@ exit;
 			print sprintf("%s %s lap:%s<br>", $result->getUser()->getId(), $result->format(), $result->getLap()->getId());
 		}
 		
-		
-		$this->tours->offsetGet(1)->getRaces()->offsetGet(1)->enableAllResults();
-
+	
 		echo "<br>vypis poradi lidi dle nejryhlejsiho casu (vysledkova listina) v dane jizde po znovuaktivneni zaznamu<br>";
 		echo "--zahajsky = 4 = 1:32.610<br>";
 		echo "--rosmuller = 3 = 1:33.531<br>";
@@ -82,8 +75,6 @@ exit;
 			print sprintf("%s %s lap:%s<br>", $result->getUser()->getId(), $result->format(), $result->getLap()->getId());
 		}
 		
-		$this->tours->offsetGet(1)->getRaces()->offsetGet(1)->enableAllResults();
-
 		echo "<br>nejlepsi cas v jizde 4 = 1:32.610<br>";
 		dump(sec2time($this->tours->offsetGet(1)->getRaces()->offsetGet(1)->getBestTime()));
 		echo "<br>nejhorsi cas v jizde 1 = 1:58.156<br>";
@@ -126,8 +117,6 @@ exit;
 			print sprintf("%s %s<br>", $result->getUser()->getId(), $result->format());
 		}
 		
-		$this->tours->offsetGet(1)->getRaces()->offsetGet(1)->enableAllResults();
-
 		echo "<h1>Tour</h1>";
 
 
@@ -159,8 +148,6 @@ exit;
 		foreach ($this->tours->offsetGet(1)->getClassification(Classification::TYPE_AVG) as $result) {
 			print sprintf("%s %s<br>", $result->getUser()->getId(), $result->format());
 		}
-		$this->tours->offsetGet(1)->getRaces()->offsetGet(1)->enableAllResults();
-
 
 
 		/*

@@ -149,7 +149,7 @@ class Race extends TourObject {
 	 */
 
 	public function enableAllResults() {
-		echo "!!! aktivuju vsechny vysledky pro race:" . $this->id . "<br>";
+		//echo "!!! aktivuju vsechny vysledky pro race:" . $this->id . "<br>";
 
 		foreach ($this->getLaps() as $lap) {
 			foreach ($lap->getResults(true) as $result) {
@@ -163,19 +163,21 @@ class Race extends TourObject {
 	 */
 
 	public function disableWorstResults() {
-		echo "!!! rusim nejhorsi vysledky pro race:" . $this->id . "<br>";
+		$this->enableAllResults();
+
+		//echo "!!! rusim nejhorsi vysledky pro race:" . $this->id . "<br>";
 
 		foreach ($this->getUsers() as $user) {
 			$user->disableWorstResult($this);
 		}
 
-		echo "<b>vypis vypnutych vysledku:</b><br>";
-		foreach ($this->getLaps() as $lap) {
-			foreach ($lap->getResults(true) as $r) {
-				if (!$r->getValid())
-					echo $r->getUser()->getId() . " v kole " . $r->getLap()->getId() . "<br>";
-			}
-		}
+//		echo "<b>vypis vypnutych vysledku:</b><br>";
+//		foreach ($this->getLaps() as $lap) {
+//			foreach ($lap->getResults(true) as $r) {
+//				if (!$r->getValid())
+//					echo $r->getUser()->getId() . " v kole " . $r->getLap()->getId() . "<br>";
+//			}
+//		}
 	}
 
 	/*
@@ -183,19 +185,20 @@ class Race extends TourObject {
 	 */
 
 	public function disableBestResults() {
-		echo "!!! rusim nejlepsi vysledky pro race:" . $this->id . "<br>";
+		$this->enableAllResults();
+		//echo "!!! rusim nejlepsi vysledky pro race:" . $this->id . "<br>";
 
 		foreach ($this->getUsers() as $user) {
 			$user->disableBestResult($this);
 		}
 
-		echo "<b>vypis vypnutych vysledku:</b><br>";
-		foreach ($this->getLaps() as $lap) {
-			foreach ($lap->getResults(true) as $r) {
-				if (!$r->getValid())
-					echo $r->getUser()->getId() . " v kole " . $r->getLap()->getId() . "<br>";
-			}
-		}
+//		echo "<b>vypis vypnutych vysledku:</b><br>";
+//		foreach ($this->getLaps() as $lap) {
+//			foreach ($lap->getResults(true) as $r) {
+//				if (!$r->getValid())
+//					echo $r->getUser()->getId() . " v kole " . $r->getLap()->getId() . "<br>";
+//			}
+//		}
 	}
 
 }

@@ -31,9 +31,9 @@ class Tour extends TourObject {
 				break;
 			case Classification::TYPE_AVG:
 				// klasifikace podle prumerneho casu
-				$t = 0;
-				$i = 0;
 				foreach ($this->getUsers() as $user) {
+					$i = 0;
+					$t = 0;
 
 					foreach ($this->getRaceResultsForUser($user) as $result) {
 						if ($result != null) {
