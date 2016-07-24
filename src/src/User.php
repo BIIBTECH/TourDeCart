@@ -7,10 +7,56 @@ class User extends TourObject {
 	public $name;
 	public $surname;
 	public $birth;
-	public $results;
+
+	//public $results;
 
 	public function __construct() {
 		$this->results = new \Nette\Utils\ArrayHash;
+	}
+
+	/*
+	 * zneaktivni nejhorsi vysledek cloveka v jizde
+	 */
+
+	public function disableWorstResult($race) {
+		$result = $this->getWorstResult($race);
+
+		if ($result != null) {
+			$result->setValid(false);
+		}
+	}
+
+	/*
+	 * zneaktivni nejlepsi vysledek cloveka v jizde
+	 */
+
+	public function disableBestResult($race) {
+		// TODO, je treba pouzit nize funkci a vupnout nejlepsi vysledek v kazde jizde
+
+		$result = $this->getBestResults($race);
+
+		if ($result != null) {
+			$result->setValid(false);
+		}
+	}
+
+	/*
+	 * vrati nejlepsi vysledky z kazde jizdy
+	 */
+
+	public function getBestResults($race) {
+		$r = null;
+		$time = 9999;
+
+		// TODO je treba vratit pole, pro kazde kolo jeden vysledek
+
+		foreach ($this->getRaceResults($race) as $result) {
+			if ($result->getTime() < $time) {
+				$r = $result;
+				$time = $result->getTime();
+			}
+		}
+		return $r;
 	}
 
 	/*
@@ -40,7 +86,7 @@ class User extends TourObject {
 
 		foreach ($tour->getRaces() as $race) {
 			$result = $this->getBestResult($race);
-			if ($result!=null && $result->getTime() < $time) {
+			if ($result != null && $result->getTime() < $time) {
 				$r = $result;
 				$time = $result->getTime();
 			}
@@ -107,7 +153,7 @@ class User extends TourObject {
 	}
 
 	/*
-	 * vrati vysledky pro konkretni kolo
+	 * vrati vysledek pro konkretni kolo
 	 */
 
 	public function getLapResult($lap) {

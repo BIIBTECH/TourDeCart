@@ -24,16 +24,40 @@ class Race extends TourObject {
 	}
 
 	/*
-	 * vrati poradi lidi dle jejich nejrychlejsiho casu napric koly
+	 * vrati poradi lidi napric koly
 	 */
 
-	public function getClassification() {
+	public function getClassification($type = Classification::TYPE_TIME) {
 		$r = array();
-		foreach ($this->getUsers() as $user) {
-			//dump($user->getId());
-			//dump(sec2time($user->getBestResult($this)->getTime()));
+		switch ($type) {
+			case Classification::TYPE_TIME:
+				// klasifikace podle nejrychlejsiho casu kola
+				foreach ($this->getUsers() as $user) {
+					//dump($user->getId());
+					//dump(sec2time($user->getBestResult($this)->getTime()));
 
-			$r[] = $user->getBestResult($this);
+					$r[] = $user->getBestResult($this);
+				}
+				break;
+			case Classification::TYPE_AVG:
+				// klasifikace podle prumerneho casu
+				$t = 0;
+				$i = 0;
+				foreach ($this->getUsers() as $user) {
+
+					foreach ($this->getLapResultsForUser($user) as $result) {
+						if ($result != null) {
+							++$i;
+							$time = $result->getTime();
+							$t+=$time;
+						}
+					}
+					$new_result = new Result();
+					$new_result->setUser($user);
+					$new_result->setTime($t / $i);
+					$r[] = $new_result;
+				}
+				break;
 		}
 		$this->sort($r, array('time'));
 		$r = \Nette\Utils\ArrayHash::from($r);
@@ -118,6 +142,60 @@ class Race extends TourObject {
 
 	function setLaps($laps) {
 		$this->laps = $laps;
+	}
+
+	/*
+	 * aktivuje vsechny vysledky v kolech
+	 */
+
+	public function enableAllResults() {
+		echo "!!! aktivuju vsechny vysledky pro race:" . $this->id . "<br>";
+
+		foreach ($this->getLaps() as $lap) {
+			foreach ($lap->getResults(true) as $result) {
+				$result->setValid(true);
+			}
+		}
+	}
+
+	/*
+	 * zneaktivni nejhorsi vysledek kazdeho cloveka v jizde
+	 */
+
+	public function disableWorstResults() {
+		echo "!!! rusim nejhorsi vysledky pro race:" . $this->id . "<br>";
+
+		foreach ($this->getUsers() as $user) {
+			$user->disableWorstResult($this);
+		}
+
+		echo "<b>vypis vypnutych vysledku:</b><br>";
+		foreach ($this->getLaps() as $lap) {
+			foreach ($lap->getResults(true) as $r) {
+				if (!$r->getValid())
+					echo $r->getUser()->getId() . " v kole " . $r->getLap()->getId() . "<br>";
+			}
+		}
+	}
+
+	/*
+	 * zneaktivni nejlepsi vysledek kazdeho cloveka v jizde
+	 */
+
+	public function disableBestResults() {
+		echo "!!! rusim nejlepsi vysledky pro race:" . $this->id . "<br>";
+
+		foreach ($this->getUsers() as $user) {
+			$user->disableBestResult($this);
+		}
+
+		echo "<b>vypis vypnutych vysledku:</b><br>";
+		foreach ($this->getLaps() as $lap) {
+			foreach ($lap->getResults(true) as $r) {
+				if (!$r->getValid())
+					echo $r->getUser()->getId() . " v kole " . $r->getLap()->getId() . "<br>";
+			}
+		}
 	}
 
 }

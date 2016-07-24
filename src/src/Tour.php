@@ -14,19 +14,59 @@ class Tour extends TourObject {
 	}
 
 	/*
-	 * vrati poradi lidi dle jejich nejrychlejsiho casu napric jizdama
+	 * vrati poradi lidi napric jizdama
 	 */
 
-	public function getClassification() {
+	public function getClassification($type = Classification::TYPE_TIME) {
 		$r = array();
-		foreach ($this->getUsers() as $user) {
-			//dump($user->getId());
-			//dump(sec2time($user->getBestResult($this)->getTime()));
+		switch ($type) {
+			case Classification::TYPE_TIME:
+				// klasifikace podle nejrychlejsiho casu kola
+				foreach ($this->getUsers() as $user) {
+					//dump($user->getId());
+					//dump(sec2time($user->getBestResult($this)->getTime()));
 
-			$r[] = $user->getBestResultForTour($this);
+					$r[] = $user->getBestResultForTour($this);
+				}
+				break;
+			case Classification::TYPE_AVG:
+				// klasifikace podle prumerneho casu
+				$t = 0;
+				$i = 0;
+				foreach ($this->getUsers() as $user) {
+
+					foreach ($this->getRaceResultsForUser($user) as $result) {
+						if ($result != null) {
+							++$i;
+							$time = $result->getTime();
+							$t+=$time;
+						}
+					}
+					$new_result = new Result();
+					$new_result->setUser($user);
+					$new_result->setTime($t / $i);
+					$r[] = $new_result;
+				}
+				break;
 		}
 		$this->sort($r, array('time'));
+
 		$r = \Nette\Utils\ArrayHash::from($r);
+		return $r;
+	}
+
+	/*
+	 * vrati vysledky vsech kol pro zadanouosobu
+	 */
+
+	public function getRaceResultsForUser($user) {
+		$r = new \Nette\Utils\ArrayHash;
+
+		foreach ($this->races as $race) {
+			foreach ($race->getLapResultsForUser($user) as $result) {
+				$r->offsetSet($r->count(), $result);
+			}
+		}
 		return $r;
 	}
 
@@ -66,6 +106,38 @@ class Tour extends TourObject {
 			}
 		}
 		return $users;
+	}
+
+	/*
+	 * aktivuje vsechny vysledky v zavodech
+	 */
+
+	public function enableAllResults() {
+
+		foreach ($this->getRaces() as $race) {
+			$race->enableAllResults();
+		}
+	}
+
+	/*
+	 * zneaktivni nejhorsi vysledek kazdeho cloveka v zavodech
+	 */
+
+	public function disableWorstResults() {
+		foreach ($this->getRaces() as $race) {
+			$race->disableWorstResults();
+		}
+	}
+
+	/*
+	 * zneaktivni nejlepsi vysledek kazdeho cloveka v zavodech
+	 */
+
+	public function disableBestResults() {
+
+		foreach ($this->getRaces() as $race) {
+			$race->disableBestResults();
+		}
 	}
 
 	public function setDate($date) {

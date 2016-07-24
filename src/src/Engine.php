@@ -22,44 +22,147 @@ class Engine {
 	}
 
 	public function test() {
-		// vypis poradi lidi dle nejryhlejsiho casu (vysledkova listina) v danem zavode
-		//zahajsky = 2 5 = 1:29.469
-		//rosmuller = 3 4 = 1:30.422
-		//strop = 3 1 = 1:31.344
-		//fuchs = 2 5 = 1:33.500
-		//krasl = 3 4 = 1:37.500
-		//kraslova = 3 5 = 1:44.812
-		//foreach ($this->tours->offsetGet(1)->getClassification() as $result) {
-		//	print sprintf("%s %s race:%s lap:%s<br>", $result->getUser()->getId(), $result->format(), $result->getRace()->getId(), $result->getLap()->getId());
-		//}
-		// vypis poradi lidi dle nejryhlejsiho casu (vysledkova listina) v dane jizde
-		//zahajsky = 4 = 1:32.610
-		//rosmuller = 3 = 1:33.531
-		//strop = 4 = 1:34.531
-		//fuchs = 5 = 1:39.703
-		//foreach ($this->tours->offsetGet(1)->getRaces()->offsetGet(1)->getClassification() as $result) {
-		//	print sprintf("%s %s lap:%s<br>", $result->getUser()->getId(), $result->format(), $result->getLap()->getId());
-		//}
-		// vysledky daneho cloveka v danem kole  1:33.859 
-		//dump(sec2time($this->tours->offsetGet(1)->getRaces()->offsetGet(1)->getLaps()->offsetGet(1)->getResultForUser($this->users->offsetGet('rosmuller'))->getTime()));
-		// vysledky daneho cloveka v dane jizde
-		//dump($this->tours->offsetGet(1)->getRaces()->offsetGet(1)->getLapResultsForUser($this->users->offsetGet('rosmuller')));
-		// nejlepsi cas cloveka v jizde 3 = 1:33.531
-		//dump($this->users->offsetGet('rosmuller')->getBestTime($this->tours->offsetGet(1)->getRaces()->offsetGet(1)));
-		// nejhorsi cas cloveka v jizde 5 = 1:38.422
-		//dump(sec2time($this->users->offsetGet('rosmuller')->getWorstTime($this->tours->offsetGet(1)->getRaces()->offsetGet(1))));
-		// nejlepsi cas v jizde 4 = 1:32.610
-		//dump(sec2time($this->tours->offsetGet(1)->getRaces()->offsetGet(1)->getBestTime()));
-		// nejhorsi cas v jizde 1 = 1:58.156
-		// dump(sec2time($this->tours->offsetGet(1)->getRaces()->offsetGet(1)->getWorstTime()));
-		// vypis poradi lidi dle nejryhlejsiho casu (vysledkova listina) v danem kole
-		//rosmuller = 1:33.859
-		//zahajsky = 1:35.219
-		//strop = 1:36.250
-		//fuchs = 1:58.156
-		//foreach ($this->tours->offsetGet(1)->getRaces()->offsetGet(1)->getLaps()->offsetGet(1)->getClassification() as $result) {
-		//	print sprintf("%s %s<br>", $result->getUser()->getId(), $result->format());
-		//}
+
+				$this->tours->offsetGet(1)->disableBestResults();
+exit;
+				
+
+		echo "<h1>User</h1>";
+		echo "<br>nejlepsi cas cloveka (rosmuller) v jizde 3 = 1:33.531<br>";
+		dump($this->users->offsetGet('rosmuller')->getBestTime($this->tours->offsetGet(1)->getRaces()->offsetGet(1)));
+		echo "<br>nejhorsi cas cloveka (rosmuller) v jizde 5 = 1:38.422<br>";
+		dump(sec2time($this->users->offsetGet('rosmuller')->getWorstTime($this->tours->offsetGet(1)->getRaces()->offsetGet(1))));
+		echo "<br>vysledky daneho cloveka (rosmuller) v danem kole (1) v dane jizde (1) 1:33.859 <br>";
+		dump(sec2time($this->tours->offsetGet(1)->getRaces()->offsetGet(1)->getLaps()->offsetGet(1)->getResultForUser($this->users->offsetGet('rosmuller'))->getTime()));
+		echo "<br>vysledky daneho cloveka (rosmuller) v dane jizde (1) <br>";
+		foreach ($this->tours->offsetGet(1)->getRaces()->offsetGet(1)->getLapResultsForUser($this->users->offsetGet('rosmuller')) as $result) {
+			print sprintf("%s %s lap:%s race:%s<br>", $result->getUser()->getId(), $result->format(), $result->getLap()->getId(), $result->getRace()->getId());
+		}
+
+		echo "<h1>Lap</h1>";
+		echo "<br>vypis poradi lidi dle nejryhlejsiho casu (vysledkova listina) v danem kole<br>";
+		echo "--rosmuller = 1:33.859<br>";
+		echo "--zahajsky = 1:35.219<br>";
+		echo "--strop = 1:36.250<br>";
+		echo "--fuchs = 1:58.156<br>";
+		echo "<b>vysledek</b>:<br>";
+		foreach ($this->tours->offsetGet(1)->getRaces()->offsetGet(1)->getLaps()->offsetGet(1)->getClassification() as $result) {
+			print sprintf("%s %s<br>", $result->getUser()->getId(), $result->format());
+		}
+		echo "<h1>Race</h1>";
+
+		echo "<br>vypis poradi lidi dle nejryhlejsiho casu (vysledkova listina) v dane jizde<br>";
+		echo "--zahajsky = 4 = 1:32.610<br>";
+		echo "--rosmuller = 3 = 1:33.531<br>";
+		echo "--strop = 4 = 1:34.531<br>";
+		echo "--fuchs = 5 = 1:39.703<br>";
+		echo "<b>vysledek</b>:<br>";
+		foreach ($this->tours->offsetGet(1)->getRaces()->offsetGet(1)->getClassification() as $result) {
+			print sprintf("%s %s lap:%s<br>", $result->getUser()->getId(), $result->format(), $result->getLap()->getId());
+		}
+		
+		$this->tours->offsetGet(1)->disableBestResults();
+
+		echo "<br>vypis poradi lidi dle nejryhlejsiho casu (vysledkova listina) v dane jizde po vyhozeni nejlepsich casu<br>";
+		echo "<b>vysledek</b>:<br>";
+		foreach ($this->tours->offsetGet(1)->getRaces()->offsetGet(1)->getClassification() as $result) {
+			print sprintf("%s %s lap:%s<br>", $result->getUser()->getId(), $result->format(), $result->getLap()->getId());
+		}
+		
+		
+		$this->tours->offsetGet(1)->getRaces()->offsetGet(1)->enableAllResults();
+
+		echo "<br>vypis poradi lidi dle nejryhlejsiho casu (vysledkova listina) v dane jizde po znovuaktivneni zaznamu<br>";
+		echo "--zahajsky = 4 = 1:32.610<br>";
+		echo "--rosmuller = 3 = 1:33.531<br>";
+		echo "--strop = 4 = 1:34.531<br>";
+		echo "--fuchs = 5 = 1:39.703<br>";
+		echo "<b>vysledek</b>:<br>";
+		foreach ($this->tours->offsetGet(1)->getRaces()->offsetGet(1)->getClassification() as $result) {
+			print sprintf("%s %s lap:%s<br>", $result->getUser()->getId(), $result->format(), $result->getLap()->getId());
+		}
+		
+		$this->tours->offsetGet(1)->getRaces()->offsetGet(1)->enableAllResults();
+
+		echo "<br>nejlepsi cas v jizde 4 = 1:32.610<br>";
+		dump(sec2time($this->tours->offsetGet(1)->getRaces()->offsetGet(1)->getBestTime()));
+		echo "<br>nejhorsi cas v jizde 1 = 1:58.156<br>";
+		dump(sec2time($this->tours->offsetGet(1)->getRaces()->offsetGet(1)->getWorstTime()));
+
+		echo "<br>AVG vypis poradi lidi dle prumerneho casu (vysledkova listina) v dane jizde<br>";
+		echo "<b>vysledek</b>:<br>";
+		echo "--AVG jizda1 zahajsky = 1:33.604<br>";
+		foreach ($this->tours->offsetGet(1)->getRaces()->offsetGet(1)->getClassification(Classification::TYPE_AVG) as $result) {
+			print sprintf("%s %s<br>", $result->getUser()->getId(), $result->format());
+		}
+		echo "--AVG jizda2 zahajsky =  1:31.115<br>";
+		echo "<b>vysledek</b>:<br>";
+		foreach ($this->tours->offsetGet(1)->getRaces()->offsetGet(2)->getClassification(Classification::TYPE_AVG) as $result) {
+			print sprintf("%s %s<br>", $result->getUser()->getId(), $result->format());
+		}
+		echo "--AVG jizda3 zahajsky =  1:37.823<br>";
+		echo "<b>vysledek</b>:<br>";
+		foreach ($this->tours->offsetGet(1)->getRaces()->offsetGet(3)->getClassification(Classification::TYPE_AVG) as $result) {
+			print sprintf("%s %s<br>", $result->getUser()->getId(), $result->format());
+		}
+
+		$this->tours->offsetGet(1)->disableWorstResults();
+
+
+		echo "<br> vypis poradi lidi dle prumerneho casu (vysledkova listina) v dane jizde<br>";
+		echo "--AVG jizda1 zahajsky =  1:33.281<br>";
+		echo "<b>vysledek</b>:<br>";
+		foreach ($this->tours->offsetGet(1)->getRaces()->offsetGet(1)->getClassification(Classification::TYPE_AVG) as $result) {
+			print sprintf("%s %s<br>", $result->getUser()->getId(), $result->format());
+		}
+		echo "--AVG jizda2 zahajsky =  1:30.534<br>";
+		echo "<b>vysledek</b>:<br>";
+		foreach ($this->tours->offsetGet(1)->getRaces()->offsetGet(2)->getClassification(Classification::TYPE_AVG) as $result) {
+			print sprintf("%s %s<br>", $result->getUser()->getId(), $result->format());
+		}
+		echo "--AVG jizda3 zahajsky =  1:33.372<br>";
+		echo "<b>vysledek</b>:<br>";
+		foreach ($this->tours->offsetGet(1)->getRaces()->offsetGet(3)->getClassification(Classification::TYPE_AVG) as $result) {
+			print sprintf("%s %s<br>", $result->getUser()->getId(), $result->format());
+		}
+		
+		$this->tours->offsetGet(1)->getRaces()->offsetGet(1)->enableAllResults();
+
+		echo "<h1>Tour</h1>";
+
+
+		echo "<br>vypis poradi lidi dle nejryhlejsiho casu (vysledkova listina) v danem zavode<br>";
+		echo "--zahajsky = 2 5 = 1:29.469<br>";
+		echo "--rosmuller = 3 4 = 1:30.422<br>";
+		echo "--strop = 3 1 = 1:31.344<br>";
+		echo "--fuchs = 2 5 = 1:33.500<br>";
+		echo "--krasl = 3 4 = 1:37.500<br>";
+		echo "--kraslova = 3 5 = 1:44.812<br>";
+		echo "<b>vysledek</b>:<br>";
+		foreach ($this->tours->offsetGet(1)->getClassification() as $result) {
+			print sprintf("%s %s race:%s lap:%s<br>", $result->getUser()->getId(), $result->format(), $result->getRace()->getId(), $result->getLap()->getId());
+		}
+
+		echo "<br>AVG vypis poradi lidi dle prumerneho casu (vysledkova listina) v danem zavode<br>";
+		echo "--zahajsky = 1:34.180<br>";
+		echo "<b>vysledek</b>:<br>";
+		foreach ($this->tours->offsetGet(1)->getClassification(Classification::TYPE_AVG) as $result) {
+			print sprintf("%s %s<br>", $result->getUser()->getId(), $result->format());
+		}
+
+		$this->tours->offsetGet(1)->disableWorstResults();
+
+
+		echo "<br>AVG vypis poradi lidi dle prumerneho casu (vysledkova listina) v danem zavode<br>";
+		echo "--zahajsky = 1:32.395  <br>";
+		echo "<b>vysledek</b>:<br>";
+		foreach ($this->tours->offsetGet(1)->getClassification(Classification::TYPE_AVG) as $result) {
+			print sprintf("%s %s<br>", $result->getUser()->getId(), $result->format());
+		}
+		$this->tours->offsetGet(1)->getRaces()->offsetGet(1)->enableAllResults();
+
+
+
 		/*
 		  // test vraceni vysledku podle kola, jizdy a akce pro daneho cloveka
 		  foreach($this->tours as $tour) {
@@ -170,6 +273,34 @@ class Engine {
 				}
 			}
 		}
+	}
+
+	public function enableAllResults() {
+		foreach ($this->getTours() as $tour) {
+			foreach ($tour->getRaces() as $race) {
+				foreach ($race->getLaps() as $lap) {
+					foreach ($lap->getResults(true) as $result) {
+						$result->setValid(true);
+					}
+				}
+			}
+		}
+	}
+
+	public function disableWorstLapInRace() {
+		
+	}
+
+	public function disableWorstLapInTour() {
+		
+	}
+
+	public function disableBestLapInRace() {
+		
+	}
+
+	public function disableBestLapInTour() {
+		
 	}
 
 }

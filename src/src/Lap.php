@@ -10,8 +10,7 @@ class Lap extends TourObject {
 	public function __construct() {
 		$this->results = new \Nette\Utils\ArrayHash;
 	}
-	
-	
+
 	/*
 	 * vrati poradi lidi dle jejich nejrychlejsiho casu
 	 */
@@ -80,6 +79,10 @@ class Lap extends TourObject {
 		return $this->results->offsetUnsetSet($k);
 	}
 
+	/* 
+	 * vrati aktivni vysledky kola
+	 * @param all pokud je true, tak vrati aktivni i neaktivni vysledky
+	 */
 	public function getResults($all = false) {
 		if ($all)
 			return $this->results;
@@ -96,5 +99,6 @@ class Lap extends TourObject {
 	function setRace($race) {
 		$this->race = $race;
 	}
+	
 
 }
