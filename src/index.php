@@ -31,5 +31,5 @@ $tour = $engine->getTours()->offsetGet(1);
 
 
 
-$latte->render('templates' . DIRECTORY_SEPARATOR . 'dashboard.latte', array('tour' => $tour));
+$latte->render('templates' . DIRECTORY_SEPARATOR . 'dashboard.latte', array('tour' => $tour, 'engine'=>$engine));
 #$html = $latte->renderToString('template.latte', $parameters);

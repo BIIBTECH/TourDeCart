@@ -12,4 +12,5 @@ class Classification {
 	const TYPE_MOVEMENTS_LAPS = 6;
 	const TYPE_MOVEMENTS_LAPS_POSITIONS = 7;
 	const TYPE_POSITION_POINTS = 8;
+	const TYPE_CRASHES = 9;
 }

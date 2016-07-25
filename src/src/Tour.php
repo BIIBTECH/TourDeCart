@@ -154,6 +154,19 @@ class Tour extends TourObject {
 					$this->sort($r, array('time'), false);
 				}
 				break;
+			case Classification::TYPE_CRASHES:
+				// klasifikace podle poctu bodu za zpozdena kola
+				foreach ($this->getUsers() as $user) {
+					$sum = 0;
+					$points = $user->getCrashesForTour($this); 
+					$new_result = new Result();
+					$new_result->setUser($user);
+					$new_result->setRace($this);
+					$new_result->setTime($points);
+					$r[] = $new_result;
+					$this->sort($r, array('time'), false);
+				}
+				break;
 
 
 		}

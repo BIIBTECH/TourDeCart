@@ -22,6 +22,25 @@ class Engine {
 	}
 
 	public function test() {
+		foreach ($this->tours->offsetGet(1)->getClassification(Classification::TYPE_CRASHES) as $result) {
+			print sprintf("%s %s<br>", $result->getUser()->getId(), $result->getTime());
+		}
+exit;
+
+
+		foreach ($this->tours->offsetGet(1)->getRaces()->offsetGet(1)->getUsers() as $user) {
+			echo $user->getId()." => ". $this->users->offsetGet($user->getId())->getMedian($this->tours->offsetGet(1)->getRaces()->offsetGet(1))->format()."<br>";
+		}
+
+		foreach ($this->tours->offsetGet(1)->getRaces()->offsetGet(1)->getClassification(Classification::TYPE_CRASHES) as $result) {
+			print sprintf("%s %s<br>", $result->getUser()->getId(), $result->getTime());
+		}
+
+		dump($this->users->offsetGet('rosmuller')->getCrashes($this->tours->offsetGet(1)->getRaces()->offsetGet(1)));
+		dump($this->users->offsetGet('rosmuller')->getCrashes($this->tours->offsetGet(1)->getRaces()->offsetGet(1)));
+		dump($this->users->offsetGet('rosmuller')->getMedian($this->tours->offsetGet(1)->getRaces()->offsetGet(1))->format());
+		dump($this->users->offsetGet('rosmuller')->getMedianForTour($this->tours->offsetGet(1))->format());
+		exit;
 
 		echo "<h1>User</h1>";
 		echo "<br>nejlepsi cas cloveka (rosmuller) v jizde 3 = 1:33.531<br>";

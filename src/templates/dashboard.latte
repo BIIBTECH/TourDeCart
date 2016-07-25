@@ -28,18 +28,13 @@
             <div align="left">
                 <pre>
 todo:
+// v pripadne rvonosti bodu u Peska urcuje poradi podle odchylky nejvyssiho casu od medianu daneho cloveka
+// zobrazeni vyslednuch tabulek aditivne
 // zobrazeni rekordu: 1. nejlepsi kolo osoby napric zavodama, 2. nejlepsi prumer  a nejmensi diff  osoby napric zavodama                </pre>
             </div>
             <h2>Pořadí v kategoriích</h2>
             <table>
                 <tr>
-                    <td valign=bottom>
-					<div class="panel panel-default">
-                            <div class="panel-body">
-							 Boduje se kazde kolo. Body dostava prvnch 6 lidi: 13,10,8,6,5,4
-
-                            </div>
-                        </div></td>
 	
                     <td valign=bottom>
 					<div class="panel panel-default">
@@ -81,37 +76,25 @@ todo:
                             <div class="panel-body">
 									průměr ze všech kol bez nejlepšího kola v každé jízdě
                             </div>
-                        </div></td></tr>
+                        </div></td>
+                    <td valign=bottom>
+					<div class="panel panel-default">
+                            <div class="panel-body">
+							pocet odchylek od medianu+{$engine->getUsers()->offsetGet('zahajsky')->diff}s
+						                          </div>
+                        </div></td>
+
+                    <td valign=bottom>
+					<div class="panel panel-default">
+                            <div class="panel-body">
+							 Boduje se kazde kolo. Body dostava prvnch 6 lidi: 13,10,8,6,5,4
+
+                            </div>
+                        </div></td>
+
+						</tr>
                 <tr>
-                    <td valign=top>
-
-                        <div class="panel panel-default">
-                            <div class="panel-heading"><span class="glyphicon glyphicon-flag" aria-hidden="true"></span> Bodovacka</div>
-                            <table class="table table-condensed" width="400px">
-                                <thead>
-                                    <tr>
-                                        <th>#</th>
-                                        <th></th>
-                                        <th>jméno</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-
-                                    {var $i=1}
-                                    {foreach $tour->getClassification(\biibtech\tdc\Classification::TYPE_POSITION_POINTS) as $result} 
-                                        <tr{if $i==1} style="background-color: lightgreen"{/if}>
-                                            <td valign=top>{$i}</td>
-                                            <td>
-                                                <span class="badge">{$result->getTime()}</span></td><td>{$result->getUser()->getSurname()}</td>
-                                        </tr>
-                                        <tr>
-                                            {var $i=++$i;}
-                                        {/foreach}
-                                </tbody>
-                            </table>
-                        </div>
-                    </td>
-                    <td valign=top>
+                                        <td valign=top>
 
                         <div class="panel panel-default">
                             <div class="panel-heading"><span class="glyphicon glyphicon-flag" aria-hidden="true"></span> Lev</div>
@@ -313,7 +296,66 @@ todo:
                                 </tbody>
                             </table>
                         </div>
-                    </td></tr></table>
+                    </td>
+					<td valign=top>
+
+                        <div class="panel panel-default">
+                            <div class="panel-heading"><span class="glyphicon glyphicon-flag" aria-hidden="true"></span> Pesek</div>
+                            <table class="table table-condensed" width="400px">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th></th>
+                                        <th>jméno</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+
+                                    {var $i=1}
+                                    {foreach $tour->getClassification(\biibtech\tdc\Classification::TYPE_CRASHES) as $result} 
+                                        <tr{if $i==1} style="background-color: lightgreen"{/if}>
+                                            <td valign=top>{$i}</td>
+                                            <td>
+                                                <span class="badge">{$result->getTime()}</span></td><td>{$result->getUser()->getSurname()}</td>
+                                        </tr>
+                                        <tr>
+                                            {var $i=++$i;}
+                                        {/foreach}
+                                </tbody>
+                            </table>
+                        </div>
+                    </td>
+
+                    <td valign=top>
+
+                        <div class="panel panel-default">
+                            <div class="panel-heading"><span class="glyphicon glyphicon-flag" aria-hidden="true"></span> Bodovacka</div>
+                            <table class="table table-condensed" width="400px">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th></th>
+                                        <th>jméno</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+
+                                    {var $i=1}
+                                    {foreach $tour->getClassification(\biibtech\tdc\Classification::TYPE_POSITION_POINTS) as $result} 
+                                        <tr{if $i==1} style="background-color: lightgreen"{/if}>
+                                            <td valign=top>{$i}</td>
+                                            <td>
+                                                <span class="badge">{$result->getTime()}</span></td><td>{$result->getUser()->getSurname()}</td>
+                                        </tr>
+                                        <tr>
+                                            {var $i=++$i;}
+                                        {/foreach}
+                                </tbody>
+                            </table>
+                        </div>
+                    </td>
+
+					</tr></table>
 
 
 

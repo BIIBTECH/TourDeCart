@@ -7,8 +7,62 @@ class User extends TourObject {
 	public $name;
 	public $surname;
 	public $birth;
+	public $diff = 5;
 
 	//public $results;
+	//
+	//
+	public function getCrashesForTour($tour) {
+		$points = 0;
+		$median = $this->getMedianForTour($tour);
+		foreach($tour->getRaces() as $race) {
+			foreach($this->getRaceResults($race) as $result) {
+				if ($result->getTime() > ($median->getTime()+$this->diff) ) {
+					$points+=1;
+				}
+			}
+		}
+		return $points;
+	}
+
+
+	public function getCrashes($race) {
+		$points = 0;
+		$median = $this->getMedian($race);
+		foreach($this->getRaceResults($race) as $result) {
+			if ($result->getTime() > ($median->getTime()+$this->diff) ) {
+				$points+=1;
+			}
+		}
+		return $points;
+	}
+
+	/*
+	 * funkce vrati casovy median
+	 */
+	public function getMedian($race) {
+		$r = $this->getRaceResults($race)->getIterator()->getArrayCopy();
+		$this->sort($r, array('time'));
+		foreach($r as $_r) {
+			#print $this->getId().' = '.$_r->format()."<br>";
+		}
+		$median = round(count($r)/2)-1;
+		return $r[$median];
+	}
+
+	/*
+	 * funkce vrati casovy median
+	 */
+	public function getMedianForTour($tour) {
+		$r = $this->getRaceResultsForTour($tour)->getIterator()->getArrayCopy();
+		$this->sort($r, array('time'));
+		foreach($r as $_r) {
+			#print $this->getId().' = '.$_r->format()."<br>";
+		}
+		$median = round(count($r)/2)-1;
+		return $r[$median];
+	}
+
 
 	/*
 	 * vrati pocet posunu nahoru v ramci jizdy
@@ -299,6 +353,24 @@ class User extends TourObject {
 		}
 		return \Nette\Utils\ArrayHash::from($r);
 	}
+
+	/*
+	 * vrati vysledky pro konkretni tour
+	 */
+
+	public function getRaceResultsForTour($tour) {
+		$r = new \Nette\Utils\ArrayHash;
+		foreach ($tour->getRaces() as $race) {
+			foreach ($race->getLaps() as $lap) {
+				$result = $this->getLapResult($lap);
+				if ($result != null && $result->getTime() > 0) {
+					$r[$r->count()] = $result;
+				}
+			}
+		}
+		return $r;
+	}
+
 
 	/*
 	 * vrati vysledky pro konkretni jizdu
