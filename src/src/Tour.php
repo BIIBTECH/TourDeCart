@@ -106,6 +106,9 @@ class Tour extends TourObject {
 				break;
 			case Classification::TYPE_MOVEMENTS_LAPS:
 				// klasifikace podle zlepseni v casech mezi koly
+				//
+				$lion = $this->getClassification(Classification::TYPE_AVG_DESC);
+
 				foreach ($this->getUsers() as $user) {
 					//dump($user->getId());
 					//dump(sec2time($user->getBestResult($this)->getTime()));
@@ -113,10 +116,16 @@ class Tour extends TourObject {
 					$new_result = new Result();
 					$new_result->setUser($user);
 					$new_result->setTime($user->getAdvancementsForTour($this));
+					$i = 1;
+					foreach ($lion as $result) {
+						if ($result->getUser()->getId()==$user->getId()) {
+							$new_result->setSort($i);
+						}
+						++$i;
+					}
 					$r[] = $new_result;
 				}
-				$this->sort($r, array('time'), false);
-
+				$this->sort($r, array('time','sort'), false);
 				break;
 			case Classification::TYPE_MOVEMENTS_LAPS_POSITIONS:
 				// klasifikace podle posunu mezi koly

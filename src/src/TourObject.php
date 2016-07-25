@@ -18,10 +18,19 @@ class TourObject {
 				return 0;
 			});
 		} else if (count($props) == 2) {
-			usort($objs, function($a, $b) use ($props) {
-				if ($a->$props[0] == $b->$props[0])
-					return $a->$props[1] > $b->$props[1] ? 1 : -1;
-				return $a->$props[0] > $b->$props[0] ? 1 : -1;
+			usort($objs, function($a, $b) use ($props, $asc) {
+				$fce0 = 'get' . ucfirst($props[0]);
+				$fce1 = 'get' . ucfirst($props[1]);
+
+				if ($a->$fce0() == $b->$fce0()) {
+					return $a->$fce1() > $b->$fce1() ? 1 : -1;
+				} else {
+					if ($asc) {
+						return $a->$fce0() > $b->$fce0() ? 1 : -1;
+					} else {
+						return $a->$fce0() < $b->$fce0() ? 1 : -1;
+					}
+				}
 			});
 		}
 	}

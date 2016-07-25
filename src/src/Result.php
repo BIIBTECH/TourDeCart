@@ -12,6 +12,7 @@ class Result {
     private $user;
     private $time;
     private $valid = true;
+	private $sort;
 
     public function getUser() {
         return $this->user;
@@ -27,6 +28,10 @@ class Result {
 
     public function getTime() {
         return $this->time;
+    }
+
+    public function getSort() {
+        return $this->sort;
     }
 
     function setLap($lap) {
@@ -51,6 +56,10 @@ class Result {
 
     function setValid($valid) {
         $this->valid = $valid;
+    }
+
+	function setSort($sort) {
+        $this->sort = $sort;
     }
 
     function format() {
