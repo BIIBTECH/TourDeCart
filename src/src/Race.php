@@ -5,9 +5,11 @@ namespace biibtech\tdc;
 class Race extends TourObject {
 
 	private $laps; // seznam kol
+	private $tour;
 
-	public function __construct() {
+	public function __construct($tour) {
 		$this->laps = new \Nette\Utils\ArrayHash;
+		$this->tour = $tour;
 	}
 
 	/*
@@ -30,80 +32,110 @@ class Race extends TourObject {
 	public function getClassification($type = Classification::TYPE_TIME) {
 		$r = array();
 		switch ($type) {
-			case Classification::TYPE_TIME:
-				// klasifikace podle nejrychlejsiho casu kola
-				foreach ($this->getUsers() as $user) {
-					//dump($user->getId());
-					//dump(sec2time($user->getBestResult($this)->getTime()));
+		case Classification::TYPE_TIME:
+			// klasifikace podle nejrychlejsiho casu kola
+			foreach ($this->getUsers() as $user) {
+				//dump($user->getId());
+				//dump(sec2time($user->getBestResult($this)->getTime()));
 
-					$r[] = $user->getBestResult($this);
-				}
-				$this->sort($r, array('time'));
-				break;
-			case Classification::TYPE_AVG:
-				// klasifikace podle prumerneho casu
+				$r[] = $user->getBestResult($this);
+			}
+			$this->sort($r, array('time'));
+			break;
+		case Classification::TYPE_AVG:
+			// klasifikace podle prumerneho casu
+			$t = 0;
+			$i = 0;
+			foreach ($this->getUsers() as $user) {
 				$t = 0;
 				$i = 0;
-				foreach ($this->getUsers() as $user) {
-					$t = 0;
-					$i = 0;
-					foreach ($this->getLapResultsForUser($user) as $result) {
-						if ($result != null) {
-							++$i;
-							$time = $result->getTime();
-							//	echo $user->getId().' + '.$time
-							$t+=$time;
-						}
+				foreach ($this->getLapResultsForUser($user) as $result) {
+					if ($result != null) {
+						++$i;
+						$time = $result->getTime();
+						//	echo $user->getId().' + '.$time
+						$t+=$time;
 					}
-					$new_result = new Result();
-					$new_result->setUser($user);
-					$new_result->setTime($t / $i);
-					$r[] = $new_result;
 				}
-				$this->sort($r, array('time'));
-				break;
-			case Classification::TYPE_DELTA:
-				// klasifikace podle delt
-				foreach ($this->getUsers() as $user) {
-					$sum = 0;
-					$deltas = $user->getDeltas($this, true); // chceme skrnout nejhorsi deltu, a tak TRUE
-					foreach ($deltas as $delta) {
-						$sum+=$delta;
-					}
-					$new_result = new Result();
-					$new_result->setUser($user);
-					$new_result->setRace($this);
-					$new_result->setTime($sum);
-					$r[] = $new_result;
+				$new_result = new Result();
+				$new_result->setUser($user);
+				$new_result->setTime($t / $i);
+				$r[] = $new_result;
+			}
+			$this->sort($r, array('time'));
+			break;
+		case Classification::TYPE_DELTA:
+			// klasifikace podle delt
+			foreach ($this->getUsers() as $user) {
+				$sum = 0;
+				$deltas = $user->getDeltas($this, true); // chceme skrnout nejhorsi deltu, a tak TRUE
+				foreach ($deltas as $delta) {
+					$sum+=$delta;
 				}
-				$this->sort($r, array('time'));
-				break;
-			case Classification::TYPE_POSITION_POINTS:
-				// klasifikace podle poctu bodu za umisteni
-				foreach ($this->getUsers() as $user) {
-					$sum = 0;
-					$points = $user->getPositionPoints($this); 
-					$new_result = new Result();
-					$new_result->setUser($user);
-					$new_result->setRace($this);
-					$new_result->setTime($points);
-					$r[] = $new_result;
-					$this->sort($r, array('time'), false);
+				$new_result = new Result();
+				$new_result->setUser($user);
+				$new_result->setRace($this);
+				$new_result->setTime($sum);
+				$r[] = $new_result;
+			}
+			$this->sort($r, array('time'));
+			break;
+		case Classification::TYPE_POSITION_POINTS:
+			// klasifikace podle poctu bodu za umisteni
+			foreach ($this->getUsers() as $user) {
+				$sum = 0;
+				$points = $user->getPositionPoints($this); 
+				$new_result = new Result();
+				$new_result->setUser($user);
+				$new_result->setRace($this);
+				$new_result->setTime($points);
+				$r[] = $new_result;
+				$this->sort($r, array('time'), false);
+			}
+			break;
+		case Classification::TYPE_CRASHES:
+			// klasifikace podle poctu bodu za zpozdena kola
+			foreach ($this->getUsers() as $user) {
+				$sum = 0;
+				$points = $user->getCrashes($this); 
+				$new_result = new Result();
+				$new_result->setUser($user);
+				$new_result->setRace($this);
+				$new_result->setTime($points);
+				$r[] = $new_result;
+				$this->sort($r, array('time'), false);
+			}
+			break;
+		case Classification::TYPE_ELIMINATION:
+			$tmp = array();
+			$do = 6;
+
+			foreach($this->getLaps() as $k=>$lap) {
+				$_r = $lap->getClassification(); // count = 5
+				if ($k>1) {
+					--$do;
+				} 
+				#print "$k => $do<br>";
+				for ($i=0;$i<min($do,count($_r));++$i) {
+					$result = $_r->offsetGet($i);
+					if (!isset($tmp[$result->getUser()->getId()])) $tmp[$result->getUser()->getId()]=0;
+					$tmp[$result->getUser()->getId()]+=1;
+
+
 				}
-				break;
-			case Classification::TYPE_CRASHES:
-				// klasifikace podle poctu bodu za zpozdena kola
-				foreach ($this->getUsers() as $user) {
-					$sum = 0;
-					$points = $user->getCrashes($this); 
-					$new_result = new Result();
-					$new_result->setUser($user);
-					$new_result->setRace($this);
-					$new_result->setTime($points);
-					$r[] = $new_result;
-					$this->sort($r, array('time'), false);
-				}
-				break;
+			}
+			foreach ($tmp as $k=>$v) {
+				$new_result = new Result();
+				$new_result->setUser($this->getTour()->getEngine()->getUsers()->offsetGet($k));
+				$new_result->setRace($this);
+				$new_result->setTime($v);
+				$r[] = $new_result;
+			}
+
+
+			$this->sort($r, array('time'), false);
+			break;
+
 
 
 		}
@@ -246,6 +278,14 @@ class Race extends TourObject {
 //					echo $r->getUser()->getId() . " v kole " . $r->getLap()->getId() . "<br>";
 //			}
 //		}
+	}
+
+	public function setTour($tour) {
+		$this->tour = $tour;
+	}
+
+	public function getTour() { 
+		return $this->tour;
 	}
 
 }

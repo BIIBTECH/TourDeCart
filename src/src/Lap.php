@@ -12,6 +12,29 @@ class Lap extends TourObject {
 		$this->results = new \Nette\Utils\ArrayHash;
 	}
 
+
+	/*
+	 *
+	 */
+	public function xx() {
+		$tmp = array();
+		$r = $this->getClassification()->getIterator()->getArrayCopy();
+
+		while(count($r)>7) {
+			array_pop($r);
+		}
+
+		while(count($r)>1) {
+			foreach ($r as $_r) {
+				if (!isset($tmp[$_r->getUser()->getId()])) $tmp[$_r->getUser()->getId()]=0;
+				$tmp[$_r->getUser()->getId()]+=1;
+			}
+			array_pop($r);
+		}
+		dump($tmp);
+	}
+
+
 	/*
 	 * vrati poradi lidi dle jejich nejrychlejsiho casu
 	 */

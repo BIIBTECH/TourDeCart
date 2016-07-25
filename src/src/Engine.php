@@ -22,11 +22,23 @@ class Engine {
 	}
 
 	public function test() {
+exit;
+		foreach ($this->tours->offsetGet(1)->getRaces()->offsetGet(1)->getClassification(Classification::TYPE_ELIMINATION) as $result) {
+			print sprintf("%s %s<br>", $result->getUser()->getId(), $result->getTime());
+		}
+		foreach ($this->tours->offsetGet(1)->getRaces()->offsetGet(2)->getClassification(Classification::TYPE_ELIMINATION) as $result) {
+			print sprintf("%s %s<br>", $result->getUser()->getId(), $result->getTime());
+		}
+		foreach ($this->tours->offsetGet(1)->getRaces()->offsetGet(3)->getClassification(Classification::TYPE_ELIMINATION) as $result) {
+			print sprintf("%s %s<br>", $result->getUser()->getId(), $result->getTime());
+		}
+		foreach ($this->tours->offsetGet(1)->getClassification(Classification::TYPE_ELIMINATION) as $result) {
+			print sprintf("%s %s<br>", $result->getUser()->getId(), $result->getTime());
+		}
+
 		foreach ($this->tours->offsetGet(1)->getClassification(Classification::TYPE_CRASHES) as $result) {
 			print sprintf("%s %s<br>", $result->getUser()->getId(), $result->getTime());
 		}
-exit;
-
 
 		foreach ($this->tours->offsetGet(1)->getRaces()->offsetGet(1)->getUsers() as $user) {
 			echo $user->getId()." => ". $this->users->offsetGet($user->getId())->getMedian($this->tours->offsetGet(1)->getRaces()->offsetGet(1))->format()."<br>";
@@ -286,7 +298,7 @@ exit;
 				unset($data['config']);
 
 				if (!$tour->getRaces()->offsetExists($raceId)) {
-					$race = new Race();
+					$race = new Race($tour);
 					$race->setId($raceId);
 					$tour->getRaces()->offsetSet($raceId, $race);
 				} else

@@ -167,6 +167,28 @@ class Tour extends TourObject {
 					$this->sort($r, array('time'), false);
 				}
 				break;
+			case Classification::TYPE_ELIMINATION:
+				$tmp = array();
+
+				foreach($this->getRaces() as $race) {
+
+					$_r = $race->getClassification(Classification::TYPE_ELIMINATION); 
+					foreach ($_r as $result) {
+						if (!isset($tmp[$result->getUser()->getId()])) $tmp[$result->getUser()->getId()]=0;
+						$tmp[$result->getUser()->getId()]+=$result->getTime();
+					}
+				}
+				foreach ($tmp as $k=>$v) {
+					$new_result = new Result();
+					$new_result->setUser($this->getEngine()->getUsers()->offsetGet($k));
+					$new_result->setTime($v);
+					$r[] = $new_result;
+				}
+
+
+				$this->sort($r, array('time'), false);
+				break;
+
 
 
 		}
