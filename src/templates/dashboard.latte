@@ -387,10 +387,13 @@ todo:
                                     </thead>
                                     <tbody>
 									{var $i=1}
+		                                {php $tour->disableWorstResults(); }
+
 										{foreach $race->getClassification(\biibtech\tdc\Classification::TYPE_AVG) as $result}
                                         <tr{if $i==1} style="background-color: lightgreen"{/if}><td>{$i}</td><td><span class="badge">{$result->format()}</span></td><td>{$result->getUser()->getSurname()}</td></tr>
 										{php ++$i;}
 										{/foreach}
+										{php $tour->enableAllResults(); }
 									</tbody>
                                 </table>
                             </div>
