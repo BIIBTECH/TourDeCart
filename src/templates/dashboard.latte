@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+        <title>Výsledky</title>
+
+        <!-- Bootstrap -->
+        <link href="css/bootstrap.min.css" rel="stylesheet">
+
+        <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+        <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+        <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+        <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+        <![endif]-->
+    </head>
+    <body>
+        <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+        <!-- Include all compiled plugins (below), or include individual files as needed -->
+        <script src="js/bootstrap.min.js"></script>
+
+        <div align="center">
+            <h1>Výsledky 15.6.2016</h1>
+            <div align="left">
+                <pre>
+todo:
+// zobrazeni rekordu: 1. nejlepsi kolo osoby napric zavodama, 2. nejlepsi prumer  a nejmensi diff  osoby napric zavodama                </pre>
+            </div>
+            <h2>Pořadí v kategoriích</h2>
+            <table>
+                <tr>
+                    <td valign=bottom>
+					<div class="panel panel-default">
+                            <div class="panel-body">
+							 Boduje se kazde kolo. Body dostava prvnch 6 lidi: 13,10,8,6,5,4
+
+                            </div>
+                        </div></td>
+	
+                    <td valign=bottom>
+					<div class="panel panel-default">
+                            <div class="panel-body">
+                                průměr ze všech kol bez nejhoršího kola v každé jízdě
+                            </div>
+                        </div></td>
+						
+						
+						<td valign=bottom><div class="panel panel-default">
+                            <div class="panel-body">
+                                nejrychlejší kolo napříč jízdama bez nejhoršího kola v každé jízdě
+                            </div>
+                        </div></td><td valign=bottom><div class="panel panel-default">
+                            <div class="panel-body">
+                                nejmenší součet rozdílů mezi koly bez největšího rozdílu v každé jízdě
+                            </div>
+                        </div></td>
+						<!--
+						<td valign=bottom><div class="panel panel-default">
+                            <div class="panel-body">
+                                počet posunů v rámci pozice v kolech bez nejhoršího kola v každé jízdě
+							 </div>
+                        </div></td>
+						-->
+						<td valign=bottom><div class="panel panel-default">
+                            <div class="panel-body">
+                                počet zlepšení času mezi jednotlivými koly napříč jízdama
+                            </div>
+                        </div></td>
+					<!--	
+						<td valign=bottom><div class="panel panel-default">
+                            <div class="panel-body">
+                                opak zajíce
+                            </div>
+                        </div></td>
+						-->
+						<td valign=bottom><div class="panel panel-default">
+                            <div class="panel-body">
+									průměr ze všech kol bez nejlepšího kola v každé jízdě
+                            </div>
+                        </div></td></tr>
+                <tr>
+                    <td valign=top>
+
+                        <div class="panel panel-default">
+                            <div class="panel-heading"><span class="glyphicon glyphicon-flag" aria-hidden="true"></span> Bodovacka</div>
+                            <table class="table table-condensed" width="400px">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th></th>
+                                        <th>jméno</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+
+                                    {var $i=1}
+                                    {foreach $tour->getClassification(\biibtech\tdc\Classification::TYPE_POSITION_POINTS) as $result} 
+                                        <tr{if $i==1} style="background-color: lightgreen"{/if}>
+                                            <td valign=top>{$i}</td>
+                                            <td>
+                                                <span class="badge">{$result->getTime()}</span></td><td>{$result->getUser()->getSurname()}</td>
+                                        </tr>
+                                        <tr>
+                                            {var $i=++$i;}
+                                        {/foreach}
+                                </tbody>
+                            </table>
+                        </div>
+                    </td>
+                    <td valign=top>
+
+                        <div class="panel panel-default">
+                            <div class="panel-heading"><span class="glyphicon glyphicon-flag" aria-hidden="true"></span> Lev</div>
+                            <table class="table table-condensed" width="400px">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th></th>
+                                        <th>jméno</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+
+                                    {php $tour->disableWorstResults(); }
+                                    {var $i=1}
+                                    {foreach $tour->getClassification(\biibtech\tdc\Classification::TYPE_AVG) as $result} 
+                                        <tr{if $i==1} style="background-color: lightgreen"{/if}>
+                                            <td valign=top>{$i}</td>
+                                            <td>
+                                                <span class="badge">{$result->format()}</span></td><td>{$result->getUser()->getSurname()}</td>
+                                        </tr>
+                                        <tr>
+                                            {var $i=++$i;}
+                                        {/foreach}
+                                        {php $tour->enableAllResults(); }
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </td><td valign=top>
+
+                        <div class="panel panel-default">
+                            <div class="panel-heading"><span class="glyphicon glyphicon-flag" aria-hidden="true"></span> Zajíc</div>
+                            <table class="table table-condensed" width="400px">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th></th>
+                                        <th>jméno</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {php $tour->disableWorstResults(); }
+                                    {var $i=1}
+                                    {foreach $tour->getClassification() as $result} 
+                                        <tr{if $i==1} style="background-color: lightgreen"{/if}>
+                                            <td valign=top>{$i}</td>
+                                            <td>
+                                                <span class="badge">{$result->format()}</span></td><td>{$result->getUser()->getSurname()}</td>
+                                        </tr>
+                                        <tr>
+                                            {var $i=++$i;}
+                                        {/foreach}
+                                        {php $tour->enableAllResults(); }
+                                </tbody>
+                            </table>
+                        </div>
+                    </td><td valign=top>
+
+                        <div class="panel panel-default">
+                            <div class="panel-heading"><span class="glyphicon glyphicon-flag" aria-hidden="true"></span> Žralok</div>
+                            <table class="table table-condensed" width="400px">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th></th>
+                                        <th>jméno</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {var $i=1}
+                                    {foreach $tour->getClassification(\biibtech\tdc\Classification::TYPE_DELTA) as $result} 
+                                        <tr{if $i==1} style="background-color: lightgreen"{/if}>
+                                            <td valign=top>{$i}</td>
+                                            <td>
+                                                <span class="badge">{$result->format()}</span></td><td>{$result->getUser()->getSurname()}</td>
+                                        </tr>
+                                        <tr>
+                                            {var $i=++$i;}
+                                        {/foreach}
+                                </tbody>
+                            </table>
+                        </div>
+                    </td>
+					<!--
+					<td valign=top>
+
+                        <div class="panel panel-default">
+                            <div class="panel-heading"><span class="glyphicon glyphicon-flag" aria-hidden="true"></span> Žába</div>
+                            <table class="table table-condensed" width="400px">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th></th>
+                                        <th>jméno</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {var $i=1}
+                                    {foreach $tour->getClassification(\biibtech\tdc\Classification::TYPE_MOVEMENTS_LAPS_POSITIONS) as $result} 
+                                        <tr{if $i==1} style="background-color: lightgreen"{/if}>
+                                            <td valign=top>{$i}</td>
+                                            <td>
+                                                <span class="badge">{$result->getTime()}</span></td><td>{$result->getUser()->getSurname()}</td>
+                                        </tr>
+                                        <tr>
+                                            {var $i=++$i;}
+                                        {/foreach}
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </td>
+					-->
+					<td valign=top>
+
+                        <div class="panel panel-default">
+                            <div class="panel-heading"><span class="glyphicon glyphicon-flag" aria-hidden="true"></span> Opice</div>
+                            <table class="table table-condensed" width="400px">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th></th>
+                                        <th>jméno</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {var $i=1}
+                                    {foreach $tour->getClassification(\biibtech\tdc\Classification::TYPE_MOVEMENTS_LAPS) as $result} 
+                                        <tr{if $i==1} style="background-color: lightgreen"{/if}>
+                                            <td valign=top>{$i}</td>
+                                            <td>
+                                                <span class="badge">{$result->getTime()}</span></td><td>{$result->getUser()->getSurname()}</td>
+                                        </tr>
+                                        <tr>
+                                            {var $i=++$i;}
+                                        {/foreach}
+                                </tbody>
+                            </table>
+                        </div>
+                    </td>
+					<!--
+					<td valign=top>
+
+                        <div class="panel panel-default">
+                            <div class="panel-heading"><span class="glyphicon glyphicon-flag" aria-hidden="true"></span> Šnek</div>
+                            <table class="table table-condensed" width="400px">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th></th>
+                                        <th>jméno</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {php $tour->disableWorstResults(); }
+                                    {var $i=1}
+                                    {foreach $tour->getClassification(\biibtech\tdc\Classification::TYPE_TIME_DESC) as $result} 
+                                        <tr{if $i==1} style="background-color: lightgreen"{/if}>
+                                            <td valign=top>{$i}</td>
+                                            <td>
+                                                <span class="badge">{$result->format()}</span></td><td>{$result->getUser()->getSurname()}</td>
+                                        </tr>
+                                        <tr>
+                                            {var $i=++$i;}
+                                        {/foreach}
+                                        {php $tour->enableAllResults(); }
+                                </tbody>
+                            </table>
+                        </div>
+                    </td>
+					-->
+					<td valign=top>
+
+                        <div class="panel panel-default">
+                            <div class="panel-heading"><span class="glyphicon glyphicon-flag" aria-hidden="true"></span> Balvan</div>
+                            <table class="table table-condensed" width="400px">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th></th>
+                                        <th>jméno</th>
+                                    </tr>
+                                </thead>
+                                {php $tour->disableBestResults(); }
+                                {var $i=1}
+                                {foreach $tour->getClassification(\biibtech\tdc\Classification::TYPE_AVG_DESC) as $result} 
+                                    <tr{if $i==1} style="background-color: lightgreen"{/if}>
+                                        <td valign=top>{$i}</td>
+                                        <td>
+                                            <span class="badge">{$result->format()}</span></td><td>{$result->getUser()->getSurname()}</td>
+                                    </tr>
+                                    <tr>
+                                        {var $i=++$i;}
+                                    {/foreach}
+                                    {php $tour->enableAllResults(); }
+                                <tbody>
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </td></tr></table>
+
+
+
+            <h2>Podrobné výsledky</h2>
+
+            <table>
+                <tbody>
+				{foreach $tour->getRaces() as $race}
+
+                    <tr>
+                        <td>
+                            {$race->getId()}&nbsp;
+
+				{foreach $race->getLaps() as $lap}
+                        <td valign=top>
+                            <div class="panel panel-default">
+                                <div class="panel-heading">kolo 1</div>
+
+                                <table  class="table table-condensed">
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th></th>
+                                            <th>jméno</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+									{var $i=1}
+										{foreach $lap->getClassification() as $result}
+                                        <tr{if $i==1} style="background-color: lightgreen"{/if}><td>{$i}</td><td><span class="badge">{$result->format()}</span></td><td>{$result->getUser()->getSurname()}</td></tr>
+										{php ++$i;}
+										{/foreach}
+									</tbody>
+                                </table>
+                            </div>
+                        </td>
+					{/foreach}
+                        <td valign=top style="padding-left: 30px">
+                            <div class="panel panel-default">
+                                <div class="panel-heading">klasifikace dle casu</div>
+
+                                <table  class="table table-condensed">
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th></th>
+                                            <th>jméno</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+									{var $i=1}
+										{foreach $race->getClassification() as $result}
+                                        <tr{if $i==1} style="background-color: lightgreen"{/if}><td>{$i}</td><td><span class="badge">{$result->format()}</span></td><td>{$result->getUser()->getSurname()}</td></tr>
+										{php ++$i;}
+										{/foreach}
+									</tbody>
+                                </table>
+                            </div>
+                        </td>
+						<td valign=top style="padding-left: 30px">
+                            <div class="panel panel-default">
+                                <div class="panel-heading">klasifikace dle prumeru</div>
+
+                                <table  class="table table-condensed">
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th></th>
+                                            <th>jméno</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+									{var $i=1}
+										{foreach $race->getClassification(\biibtech\tdc\Classification::TYPE_AVG) as $result}
+                                        <tr{if $i==1} style="background-color: lightgreen"{/if}><td>{$i}</td><td><span class="badge">{$result->format()}</span></td><td>{$result->getUser()->getSurname()}</td></tr>
+										{php ++$i;}
+										{/foreach}
+									</tbody>
+                                </table>
+                            </div>
+                        </td>
+
+
+                    </tr>
+					{/foreach}
+
+                    </tr>
+                </tbody>
+            </table>
+
+            <h2>Naměřené hodnoty dle člověka</h2>
+            <pre>
+<table>
+{foreach $tour->getUsers() as $user}
+<tr>
+{foreach $tour->getRaces() as $race}
+<td valign=top>
+    <div class="panel panel-default">
+    <div class="panel-heading">{$user->getSurname()} - jizda {$race->getId()}</div>
+
+<table class="table table-condensed">
+    <thead>
+        <tr>
+            <th>#</th>
+            <th></th>
+        </tr>
+    </thead>
+<tbody>
+{var $i=1}
+{foreach $race->getLaps() as $lap}
+{foreach $lap->getResults() as $result}
+{if $result->getUser()->getId() == $user->getId()}
+<tr{if $result->getTime()==$user->getBestTime($race)} style="background-color: lightgreen"{/if}><td>{$i}</td><td><span class="badge">{$result->format()}</span></td></tr>
+{/if}
+{/foreach}
+{php ++$i;}
+{/foreach}
+</tbody>
+</table>
+</div>
+</td>
+{/foreach}
+</tr>
+{/foreach}
+</table>
+
+
+
+            </pre>
+
+        </div>
+
+    </body>
+</html>
+
