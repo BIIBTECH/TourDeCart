@@ -4,8 +4,9 @@ namespace biibtech\tdc;
 
 class Lap extends TourObject {
 
-	public $results;
-	public $race;
+	private $results;
+	private $race;
+	static public $points = array(13,10,8,6,5,4);
 
 	public function __construct() {
 		$this->results = new \Nette\Utils\ArrayHash;

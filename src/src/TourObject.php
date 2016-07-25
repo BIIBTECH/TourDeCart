@@ -6,11 +6,15 @@ class TourObject {
 
 	protected $id;
 
-	function sort(&$objs, $props) {
+	function sort(&$objs, $props, $asc = true) {
 		if (count($props) == 1) {
-			usort($objs, function($a, $b) use ($props) {
-				$fce='get'.ucfirst($props[0]);
-				return $a->$fce() > $b->$fce() ? 1 : -1;
+			usort($objs, function($a, $b) use ($props, $asc) {
+				$fce = 'get' . ucfirst($props[0]);
+				if ($asc) {
+					return $a->$fce() > $b->$fce() ? 1 : -1;
+				} else {
+					return $a->$fce() < $b->$fce() ? 1 : -1;
+				}
 				return 0;
 			});
 		} else if (count($props) == 2) {

@@ -4,235 +4,373 @@ namespace biibtech\tdc;
 
 class User extends TourObject {
 
-    public $name;
-    public $surname;
-    public $birth;
+	public $name;
+	public $surname;
+	public $birth;
 
-    //public $results;
+	//public $results;
 
-    /*
-     * vrati serazene delty uzivatele v dane jizde
-     */
-    public function getDeltas($race) {
-        $prev = null;
-        $i = 0;
-        $delta = array();
-        foreach ($race->getLaps() as $lap) {
+	/*
+	 * vrati pocet posunu nahoru v ramci jizdy
+	 */
+	public function getMovementsForTour($tour) {
+		$pos = 0;
+		foreach ($tour->getRaces() as $race) {
+			$pos+=$this->getMovements($race);
+		}
+		return $pos;
+	}
 
-            foreach ($lap->getResults() as $result) {
-                if ($result->getUser()->getId() == $this->id) {
-                    if ($i > 0) {
-                        $delta = abs($result->getTime() - $prev->getTime());
-                        $deltas[] = $delta;
-                    }
-                    $prev = $result;
-                    ++$i;
-                }
-            }
-        }
-        sort($deltas);
-        array_pop($deltas);
-        return \Nette\Utils\ArrayHash::from($deltas);
-    }
+	/*
+	 * vrati pocet posunu nahoru v ramci jizdy
+	 */
 
-    public function __construct() {
-        $this->results = new \Nette\Utils\ArrayHash;
-    }
+	public function getMovements($race) {
+		$pos = 0;
+		$v = array();
 
-    /*
-     * zneaktivni nejhorsi vysledek cloveka v jizde
-     */
+		foreach ($race->getLaps() as $lap) {
+			foreach ($lap->getClassification() as $i=>$result) {
+				if ($result->getUser()->getId() == $this->id) {
+					$v[]=$i;
+				}
+			}
+		}
+		$i = 0;
+		$prev = null;
+		foreach($v as $p) {
+			if ($i>0) {
+				if ($p<$prev) {
+					$pos+=1;
+				}
+			}
+			++$i;
+			$prev = $p;
 
-    public function disableWorstResult($race) {
-        $result = $this->getWorstResult($race);
+		}
+		return $pos;
+	}
 
-        if ($result != null) {
-            $result->setValid(false);
-        }
-    }
+	/*
+	 * vrati pocet bodu za poizici v jednotlivych kolech  v ramci jizdy
+	 */
 
-    /*
-     * zneaktivni nejlepsi vysledek cloveka v jizde
-     */
+	public function getPositionPointsForTour($tour) {
+		$points = 0;
+		foreach($tour->getRaces() as $race) {
+			$points+=$this->getPositionPoints($race);
+		}
+		return $points;
+	}
 
-    public function disableBestResult($race) {
-        // TODO, je treba pouzit nize funkci a vupnout nejlepsi vysledek v kazde jizde
 
-        $result = $this->getBestResults($race);
 
-        if ($result != null) {
-            $result->setValid(false);
-        }
-    }
+	/*
+	 * vrati pocet bodu za poizici v jednotlivych kolech  v ramci jizdy
+	 */
 
-    /*
-     * vrati nejlepsi vysledky z kazde jizdy
-     */
+	public function getPositionPoints($race) {
+		$points = 0;
+		foreach($race->getLaps() as $lap) {
+			$points+=$this->getPositionPointsForLap($lap);
+		}
+		return $points;
+	}
 
-    public function getBestResults($race) {
-        $r = null;
-        $time = 9999;
+	/*
+	 * vrati pocet bodu za poizici v jednotlivych kolech  v ramci kola
+	 */
 
-        // TODO je treba vratit pole, pro kazde kolo jeden vysledek
+	public function getPositionPointsForLap($lap) {
+		foreach ($lap->getClassification() as $i=>$result) {
+			if ($result->getUser()->getId()==$this->id) {
+				return (isset(Lap::$points[$i])?Lap::$points[$i]:0);
+			}
+		}
+		return 0;
+	}
 
-        foreach ($this->getRaceResults($race) as $result) {
-            if ($result->getTime() < $time) {
-                $r = $result;
-                $time = $result->getTime();
-            }
-        }
-        return $r;
-    }
 
-    /*
-     * vrati nejhorsi cas v dane jizde
-     */
 
-    public function getWorstResult($race) {
-        $r = null;
-        $time = null;
+	/*
+	 * vrati pocet zlepseni v case v ramci jizdy
+	 */
 
-        foreach ($this->getRaceResults($race) as $result) {
-            if ($result->getTime() > $time) {
-                $r = $result;
-                $time = $result->getTime();
-            }
-        }
-        return $r;
-    }
+	public function getAdvancementsForTour($tour) {
+		$pos = 0;
+		foreach ($tour->getRaces() as $race) {
+			$pos+=$this->getAdvancements($race);
+		}
+		return $pos;
+	}
 
-    /*
-     * vrati nejlepsi cas v danem zavode
-     */
+	/*
+	 * vrati pocet zlepseni v case v ramci jizdy
+	 */
 
-    public function getBestResultForTour($tour) {
-        $r = null;
-        $time = 9999;
+	public function getAdvancements($race) {
+		$pos = 0;
+		$i = 1;
+		$prev = null;
+		foreach ($this->getRaceResults($race) as $result) {
+			if ($i > 1) {
+				if ($result->getTime() < $prev->getTime()) {
+					$pos+=1;
+				}
+			}
+			$prev = $result;
+			++$i;
+		}
+		return $pos;
+	}
 
-        foreach ($tour->getRaces() as $race) {
-            $result = $this->getBestResult($race);
-            if ($result != null && $result->getTime() < $time) {
-                $r = $result;
-                $time = $result->getTime();
-            }
-        }
+	/*
+	 * vrati serazene delty uzivatele v dane jizde
+	 * $disableWorst urcuje, zda se ma skrtnout nejhorsi delta
+	 */
 
-        return $r;
-    }
+	public function getDeltas($race, $disableWorst = false) {
+		$prev = null;
+		$i = 0;
+		$deltas = array();
+		foreach ($race->getLaps() as $lap) {
 
-    /*
-     * vrati nejlepsi cas v dane jizde
-     */
+			foreach ($lap->getResults() as $result) {
+				if ($result->getUser()->getId() == $this->id) {
+					if ($i > 0) {
+						$delta = abs($result->getTime() - $prev->getTime());
+						$deltas[] = $delta;
+					}
+					$prev = $result;
+					++$i;
+				}
+			}
+		}
+		if ($deltas != null) {
+			sort($deltas);
+			if ($disableWorst)
+				array_pop($deltas);
+		}
+		return \Nette\Utils\ArrayHash::from($deltas);
+	}
 
-    public function getBestResult($race) {
-        $r = null;
-        $time = 9999;
-        foreach ($this->getRaceResults($race) as $result) {
-            if ($result->getTime() < $time) {
-                $r = $result;
-                $time = $result->getTime();
-            }
-        }
-        return $r;
-    }
+	public function __construct() {
+		$this->results = new \Nette\Utils\ArrayHash;
+	}
 
-    public function getBestTime($race) {
-        return $this->getBestResult($race)->getTime();
-    }
+	/*
+	 * zneaktivni nejhorsi vysledek cloveka v jizde
+	 */
 
-    /*
-     * vrati nejhorsi cas v dane jizde
-     */
+	public function disableWorstResult($race) {
+		$result = $this->getWorstResult($race);
 
-    public function getWorstTime($race) {
-        return $this->getWorstResult($race)->getTime();
-    }
+		if ($result != null) {
+			$result->setValid(false);
+		}
+	}
 
-    /*
-     * vrati vysledky pro konkretni akci
-     */
+	/*
+	 * zneaktivni nejlepsi vysledek cloveka v jizde
+	 */
 
-    public function getTourResult($tour) {
-        $r = array();
-        foreach ($tour->getRaces() as $race) {
-            foreach ($this->getRaceResults($race) as $result) {
-                $r[$race->getId()][] = $result;
-            }
-        }
-        return \Nette\Utils\ArrayHash::from($r);
-    }
+	public function disableBestResult($race) {
+		// TODO, je treba pouzit nize funkci a vupnout nejlepsi vysledek v kazde jizde
 
-    /*
-     * vrati vysledky pro konkretni jizdu
-     */
+		$result = $this->getBestResults($race);
 
-    public function getRaceResults($race) {
-        $r = new \Nette\Utils\ArrayHash;
-        foreach ($race->getLaps() as $lap) {
-            $result = $this->getLapResult($lap);
-            if ($result != null && $result->getTime() > 0) {
-                $r[$r->count()] = $result;
-            }
-        }
-        return $r;
-    }
+		if ($result != null) {
+			$result->setValid(false);
+		}
+	}
 
-    /*
-     * vrati vysledek pro konkretni kolo
-     */
+	/*
+	 * vrati nejlepsi vysledky z kazde jizdy
+	 */
 
-    public function getLapResult($lap) {
-        foreach ($lap->getResults() as $r) {
-            if ($r->getUser()->getId() == $this->id) {
-                return $r;
-            }
-        }
-        return null;
-    }
+	public function getBestResults($race) {
+		$r = null;
+		$time = 9999;
 
-    /*
-     * vrati ofiltrovane vysledky
-     */
+		// TODO je treba vratit pole, pro kazde kolo jeden vysledek
 
-    public function getRows($race) {
-        $filteredResults = $this->getResults();
-    }
+		foreach ($this->getRaceResults($race) as $result) {
+			if ($result->getTime() < $time) {
+				$r = $result;
+				$time = $result->getTime();
+			}
+		}
+		return $r;
+	}
 
-    public function getName() {
-        return $this->name;
-    }
+	/*
+	 * vrati nejhorsi cas v dane jizde
+	 */
 
-    public function getSurname() {
-        return $this->surname;
-    }
+	public function getWorstResult($race) {
+		$r = null;
+		$time = 0;
 
-    public function getBirth() {
-        return $this->birth;
-    }
+		foreach ($this->getRaceResults($race) as $result) {
+			if ($result->getTime() > $time) {
+				$r = $result;
+				$time = $result->getTime();
+			}
+		}
+		return $r;
+	}
 
-    function setName($name) {
-        $this->name = $name;
-    }
+	/*
+	 * vrati nejhorsi cas v danem zavode
+	 */
 
-    function setSurname($surname) {
-        $this->surname = $surname;
-    }
+	public function getWorstResultForTour($tour) {
+		$r = null;
+		$time = 0;
 
-    function setBirth($birth) {
-        $this->birth = $birth;
-    }
+		foreach ($tour->getRaces() as $race) {
+			$result = $this->getWorstResult($race);
+			if ($result != null && $result->getTime() > $time) {
+				$r = $result;
+				$time = $result->getTime();
+			}
+		}
 
-    function setResults($results) {
-        $this->results = $results;
-    }
+		return $r;
+	}
 
-    public function getResults() {
+	/*
+	 * vrati nejlepsi cas v danem zavode
+	 */
 
-        $tmp = array_filter($this->results->getIterator()->getArrayCopy(), function($obj) {
-            return $obj->getValid();
-        });
+	public function getBestResultForTour($tour) {
+		$r = null;
+		$time = 9999;
 
-        return \Nette\Utils\ArrayHash::from($tmp);
-    }
+		foreach ($tour->getRaces() as $race) {
+			$result = $this->getBestResult($race);
+			if ($result != null && $result->getTime() < $time) {
+				$r = $result;
+				$time = $result->getTime();
+			}
+		}
+
+		return $r;
+	}
+
+	/*
+	 * vrati nejlepsi cas v dane jizde
+	 */
+
+	public function getBestResult($race) {
+		$r = null;
+		$time = 9999;
+		foreach ($this->getRaceResults($race) as $result) {
+			if ($result->getTime() < $time) {
+				$r = $result;
+				$time = $result->getTime();
+			}
+		}
+		return $r;
+	}
+
+	public function getBestTime($race) {
+		return $this->getBestResult($race)->getTime();
+	}
+
+	/*
+	 * vrati nejhorsi cas v dane jizde
+	 */
+
+	public function getWorstTime($race) {
+		return $this->getWorstResult($race)->getTime();
+	}
+
+	/*
+	 * vrati vysledky pro konkretni akci
+	 */
+
+	public function getTourResult($tour) {
+		$r = array();
+		foreach ($tour->getRaces() as $race) {
+			foreach ($this->getRaceResults($race) as $result) {
+				$r[$race->getId()][] = $result;
+			}
+		}
+		return \Nette\Utils\ArrayHash::from($r);
+	}
+
+	/*
+	 * vrati vysledky pro konkretni jizdu
+	 */
+
+	public function getRaceResults($race) {
+		$r = new \Nette\Utils\ArrayHash;
+		foreach ($race->getLaps() as $lap) {
+			$result = $this->getLapResult($lap);
+			if ($result != null && $result->getTime() > 0) {
+				$r[$r->count()] = $result;
+			}
+		}
+		return $r;
+	}
+
+	/*
+	 * vrati vysledek pro konkretni kolo
+	 */
+
+	public function getLapResult($lap) {
+		foreach ($lap->getResults() as $r) {
+			if ($r->getUser()->getId() == $this->id) {
+				return $r;
+			}
+		}
+		return null;
+	}
+
+	/*
+	 * vrati ofiltrovane vysledky
+	 */
+
+	public function getRows($race) {
+		$filteredResults = $this->getResults();
+	}
+
+	public function getName() {
+		return $this->name;
+	}
+
+	public function getSurname() {
+		return $this->surname;
+	}
+
+	public function getBirth() {
+		return $this->birth;
+	}
+
+	function setName($name) {
+		$this->name = $name;
+	}
+
+	function setSurname($surname) {
+		$this->surname = $surname;
+	}
+
+	function setBirth($birth) {
+		$this->birth = $birth;
+	}
+
+	function setResults($results) {
+		$this->results = $results;
+	}
+
+	public function getResults() {
+
+		$tmp = array_filter($this->results->getIterator()->getArrayCopy(), function($obj) {
+			return $obj->getValid();
+		});
+
+		return \Nette\Utils\ArrayHash::from($tmp);
+	}
 
 }
