@@ -43,4 +43,7 @@ class TourObject {
 		$this->id = $id;
 	}
 
+	public function __toString() {
+		return $this->id;
+	}
 }

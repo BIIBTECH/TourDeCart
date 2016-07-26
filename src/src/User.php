@@ -445,9 +445,6 @@ class User extends TourObject {
 		return \Nette\Utils\ArrayHash::from($tmp);
 	}
 
-	public function __toString() {
-		return $this->id;
-	}
 
 	public function toString($bit = 0b000) {
 		$s = '';
