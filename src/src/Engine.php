@@ -25,6 +25,10 @@ class Engine {
 	}
 
 	public function test() {
+		exit;
+		echo $this->tours->offsetGet(1)->getRaces()->offsetGet(1);
+		echo $this->users->offsetGet('rosmuller');
+		echo $this->tours->offsetGet(1)->getRaces()->offsetGet(1)->getLaps()->offsetGet(1);
 		echo "1. jizda tabulka eliminaci<br>";
 		foreach ($this->tours->offsetGet(1)->getRaces()->offsetGet(1)->getClassification(Classification::TYPE_ELIMINATION) as $result) {
 			print sprintf("%s %s<br>", $result->getUser()->getId(), $result->getTime());
@@ -301,7 +305,7 @@ exit;
 			foreach ($files as $file) {
 				$data = parse_ini_file($file, true);
 				$config = $data['config'];
-				$raceId = $config['id'];
+				$raceId = (int)$config['id'];
 				unset($data['config']);
 
 				if (!$tour->getRaces()->offsetExists($raceId)) {
