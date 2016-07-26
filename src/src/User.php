@@ -445,4 +445,16 @@ class User extends TourObject {
 		return \Nette\Utils\ArrayHash::from($tmp);
 	}
 
+	public function __toString() {
+		return $this->id;
+	}
+
+	public function toString($bit = 0b000) {
+		$s = '';
+		if( $bit & (1 << 2) ) { $s.=' '.$this->surname; }
+		if( $bit & (1 << 1) ) { $s.=' '.$this->name; }
+		if( $bit & (1 << 0) ) { $s.=' '.($this->birth?(date("Y")-$this->birth):''); }
+		return $s;
+	}
+
 }

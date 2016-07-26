@@ -7,6 +7,7 @@ class Tour extends TourObject {
 	private $races;
 	private $date;
 	private $engine;
+	private $trash;
 
 	function __construct($engine) {
 		$this->races = new \Nette\Utils\ArrayHash;
@@ -236,7 +237,9 @@ class Tour extends TourObject {
 		return max($max);
 	}
 
-	/* vrati seznam lidi, kteri se ucastnili dany den
+	/* 
+	 * vrati seznam lidi, kteri se ucastnili dany den
+	 * udelat alg X jizd a vyse (napr x=3)
 	 */
 
 	function getUsers() {
@@ -286,12 +289,47 @@ class Tour extends TourObject {
 		$this->date = $date;
 	}
 
-	public function getRaces() {
+	public function getRaces($all = false) {
 		return $this->races;
+		if ($all)
+			return $this->races;
+		$tmp = array_filter($this->races->getIterator()->getArrayCopy(), function($obj) {
+			return $obj->getValid();
+		});
+		return \Nette\Utils\ArrayHash::from($tmp);
+	}
+
+	/*
+	 * zneaktivni cele jizdy
+	 */
+	public function disableRace($race) {
+		$this->trash[$race->getId()]=$race;
+		$this->removeRace($race);
+		
+	}
+	/*
+	 * zaktivni cele jizdy
+	 */
+	public function enableRace($race) {
+		$this->addRace($this->trash[$race->getId()]);
+		unset($this->trash[$race->getId()]);
+	}
+
+
+	public function addRace($race) {
+		return $this->races->offsetSet($race->getId(), $race);
+	}
+
+	public function removeRace($race) {
+		return $this->races->offsetUnset($race->getId());
 	}
 
 	public function getEngine() {
 		return $this->engine;
+	}
+
+	function getTrash() {
+		return $this->trash;
 	}
 
 	function getDate() {

@@ -6,6 +6,7 @@ class Race extends TourObject {
 
 	private $laps; // seznam kol
 	private $tour;
+	private $valid = true;
 
 	public function __construct($tour) {
 		$this->laps = new \Nette\Utils\ArrayHash;
@@ -123,6 +124,15 @@ class Race extends TourObject {
 
 
 				}
+				/*
+				for ($i=min($do,count($_r));$i<count($_r);$i++) {
+					$result = $_r->offsetGet($i);
+					#print "unsetuju v kole $k cloveka ".$result->getUser()->getId()."<br>";
+					if (isset($tmp[$result->getUser()->getId()])) {
+						unset($tmp[$result->getUser()->getId()]);
+					}
+				}
+				 */
 			}
 			foreach ($tmp as $k=>$v) {
 				$new_result = new Result();
@@ -287,5 +297,14 @@ class Race extends TourObject {
 	public function getTour() { 
 		return $this->tour;
 	}
+
+    function getValid() {
+        return $this->valid;
+    }
+
+    function setValid($valid) {
+        $this->valid = $valid;
+    }
+
 
 }

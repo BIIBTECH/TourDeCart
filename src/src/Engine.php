@@ -19,22 +19,29 @@ class Engine {
 		$this->loadinis();
 
 		//$this->test();
+//		$this->tours->offsetGet(1)->disableRace($this->tours->offsetGet(1)->getRaces()->offsetGet(2));
+//		$this->tours->offsetGet(1)->disableRace($this->tours->offsetGet(1)->getRaces()->offsetGet(3));
+//		$this->tours->offsetGet(1)->enableRace($this->tours->offsetGet(1)->getTrash()[2]);
 	}
 
 	public function test() {
-exit;
+		echo "1. jizda tabulka eliminaci<br>";
 		foreach ($this->tours->offsetGet(1)->getRaces()->offsetGet(1)->getClassification(Classification::TYPE_ELIMINATION) as $result) {
 			print sprintf("%s %s<br>", $result->getUser()->getId(), $result->getTime());
 		}
+		echo "2. jizda tabulka eliminaci<br>";
 		foreach ($this->tours->offsetGet(1)->getRaces()->offsetGet(2)->getClassification(Classification::TYPE_ELIMINATION) as $result) {
 			print sprintf("%s %s<br>", $result->getUser()->getId(), $result->getTime());
 		}
+		echo "3. jizda tabulka eliminaci<br>";
 		foreach ($this->tours->offsetGet(1)->getRaces()->offsetGet(3)->getClassification(Classification::TYPE_ELIMINATION) as $result) {
 			print sprintf("%s %s<br>", $result->getUser()->getId(), $result->getTime());
 		}
+		echo "1. tour tabulka eliminaci<br>";
 		foreach ($this->tours->offsetGet(1)->getClassification(Classification::TYPE_ELIMINATION) as $result) {
 			print sprintf("%s %s<br>", $result->getUser()->getId(), $result->getTime());
 		}
+exit;
 
 		foreach ($this->tours->offsetGet(1)->getClassification(Classification::TYPE_CRASHES) as $result) {
 			print sprintf("%s %s<br>", $result->getUser()->getId(), $result->getTime());
